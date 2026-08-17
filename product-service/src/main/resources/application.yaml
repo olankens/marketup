@@ -12,6 +12,10 @@ spring:
       username: ${MONGO_USERNAME}
       password: ${MONGO_PASSWORD}
       authentication-database: ${MONGO_AUTH_DB:admin}
+  web:
+    error:
+      include-message: always
+      include-stacktrace: never
 
 server:
   port: 8080
