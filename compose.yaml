@@ -1,0 +1,40 @@
+services:
+  mongodb:
+    image: mongo:7.0.4
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db
+
+  inventory-db:
+    image: mysql:8
+    container_name: inventory-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: inventory-db
+    volumes:
+      - inventory_data:/var/lib/mysql
+
+  order-db:
+    image: postgres:16-alpine
+    container_name: order-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: order-db
+    volumes:
+      - order_data:/var/lib/posgresql/data
+
+volumes:
+  mongo_data:
+  inventory_data:
+  order_data:
