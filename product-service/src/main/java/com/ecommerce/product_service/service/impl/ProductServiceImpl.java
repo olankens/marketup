@@ -2,6 +2,7 @@ package com.ecommerce.product_service.service.impl;
 
 import com.ecommerce.product_service.dto.ProductRequestDTO;
 import com.ecommerce.product_service.dto.ProductResponseDTO;
+import com.ecommerce.product_service.exception.ResourceNotFoundException;
 import com.ecommerce.product_service.mapper.ProductMapper;
 import com.ecommerce.product_service.model.Product;
 import com.ecommerce.product_service.repository.ProductRepository;
@@ -36,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDTO getProductById(String id) {
         Product product = repository.findById(id).orElseThrow(
-                () -> new RuntimeException("No product found with id " + id)
+                () -> new ResourceNotFoundException("Product", "id", id)
         );
         return mapper.toProductResponseDTO(product);
     }
@@ -44,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDTO updateProductById(String id, ProductRequestDTO productRequest) {
         Product product = repository.findById(id).orElseThrow(
-                () -> new RuntimeException("No product found with id " + id)
+                () -> new ResourceNotFoundException("Product", "id", id)
         );
         mapper.updateProductFromRequest(productRequest, product);
         Product updatedProduct = repository.save(product);
@@ -54,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(String id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("No product found with id " + id);
+            throw new ResourceNotFoundException("Product", "id", id);
         }
         repository.deleteById(id);
     }
