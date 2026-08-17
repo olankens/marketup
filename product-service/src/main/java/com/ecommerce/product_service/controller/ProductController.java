@@ -30,6 +30,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ProductResponseDTO getProductById(@PathVariable String id) {
         return productService.getProductById(id);
     }
