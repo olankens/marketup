@@ -35,3 +35,10 @@
 ```sh
 idea .
 ```
+
+### CREATE MONGODB COLLECTION
+
+```mongodb-json
+use product-db
+db.createCollection("product")
+```
