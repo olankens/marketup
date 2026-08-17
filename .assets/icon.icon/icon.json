@@ -7,13 +7,13 @@
       "layers" : [
         {
           "glass" : false,
-          "image-name" : "Image.png",
+          "image-name" : "Image.jpeg",
           "name" : "Image",
           "position" : {
-            "scale" : 1,
+            "scale" : 0.4,
             "translation-in-points" : [
-              0,
-              108
+              1,
+              13
             ]
           }
         }
