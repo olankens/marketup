@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///Users/master/Documents/marketup/config-data
+          clone-on-start: true
+          default-label: main
+
+server:
+  port: 8888
