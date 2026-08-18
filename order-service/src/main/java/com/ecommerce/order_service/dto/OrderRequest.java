@@ -15,5 +15,5 @@ public class OrderRequest {
 
     @NotEmpty
     @Valid
-    private List<OrderLineItemsRequest> orderLineItemsDtoList;
+    private List<OrderLineItemsRequest> orderLineItemsList;
 }

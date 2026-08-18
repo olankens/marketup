@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,12 +23,26 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final WebClient.Builder webClientBuilder;
 
     @Override
     @Transactional
     public OrderResponse placeOrder(OrderRequest orderRequest) {
         log.info("Placing new order");
         Order order = orderMapper.toOrder(orderRequest);
+        for (var item : order.getOrderLineItemsList()) {
+            String sku = item.getSku();
+            Integer quantity = item.getQuantity();
+            Boolean isInStock = webClientBuilder.build().get()
+                    .uri("http://localhost:8082/api/v1/inventory/" + sku,
+                            uriBuilder -> uriBuilder.queryParam("quantity", quantity).build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+            if (Boolean.FALSE.equals(isInStock)) {
+                throw new IllegalArgumentException("No stock available from sku: " + sku);
+            }
+        }
         order.setOrderNumber(UUID.randomUUID().toString());
         Order placedOrder = orderRepository.save(order);
         log.info("Order placed with id: {}", placedOrder.getId());

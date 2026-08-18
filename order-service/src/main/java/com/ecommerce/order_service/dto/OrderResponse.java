@@ -17,5 +17,5 @@ public class OrderResponse {
 
     private String orderNumber;
 
-    private List<OrderLineItemsResponse> orderLineItemsDtoList;
+    private List<OrderLineItemsResponse> orderLineItemsList;
 }
