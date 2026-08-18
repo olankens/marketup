@@ -3,7 +3,7 @@ spring:
     name: inventory-service
   threads:
     virtual:
-      enabled: on
+      enabled: true
   datasource:
     url: jdbc:mysql://localhost:3306/inventory-db
     username: root
