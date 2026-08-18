@@ -7,13 +7,8 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record ProductRequestDTO(
-        @NotBlank
-        String name,
-
+        @NotBlank String name,
         String description,
-
-        @NotNull
-        @Positive
-        BigDecimal price
+        @NotNull @Positive BigDecimal price
 ) {
 }
