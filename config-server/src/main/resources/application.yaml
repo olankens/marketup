@@ -5,7 +5,9 @@ spring:
     config:
       server:
         git:
-          uri: file:///Users/master/Documents/marketup/config-data
+          uri: https://github.com/olankens/marketup-config-data.git
+          username: ${GITHUB_USER}
+          password: ${GITHUB_TOKEN}
           clone-on-start: true
           default-label: main
 
