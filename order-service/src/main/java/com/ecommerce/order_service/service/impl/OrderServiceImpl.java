@@ -33,14 +33,16 @@ public class OrderServiceImpl implements OrderService {
         for (var item : order.getOrderLineItemsList()) {
             String sku = item.getSku();
             Integer quantity = item.getQuantity();
-            Boolean isInStock = webClientBuilder.build().get()
-                    .uri("http://localhost:8082/api/v1/inventory/" + sku,
-                            uriBuilder -> uriBuilder.queryParam("quantity", quantity).build())
-                    .retrieve()
-                    .bodyToMono(Boolean.class)
-                    .block();
-            if (Boolean.FALSE.equals(isInStock)) {
-                throw new IllegalArgumentException("No stock available from sku: " + sku);
+            try {
+                webClientBuilder.build().get()
+                        .uri("http://localhost:8082/api/v1/inventory/reduce/" + sku,
+                                uriBuilder -> uriBuilder.queryParam("quantity", quantity).build())
+                        .retrieve()
+                        .bodyToMono(Boolean.class)
+                        .block();
+            } catch (Exception ex) {
+                log.error("Error when reducing the stock of product {}: {}", sku, ex.getMessage());
+                throw new IllegalStateException("No stock available from sku: " + sku);
             }
         }
         order.setOrderNumber(UUID.randomUUID().toString());
