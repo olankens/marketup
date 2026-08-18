@@ -7,11 +7,11 @@ import com.ecommerce.order_service.mapper.OrderMapper;
 import com.ecommerce.order_service.model.Order;
 import com.ecommerce.order_service.repository.OrderRepository;
 import com.ecommerce.order_service.service.OrderService;
+import com.ecommerce.order_service.service.client.InventoryClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +23,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final WebClient.Builder webClientBuilder;
+    // private final WebClient.Builder webClientBuilder;
+    private final InventoryClient inventoryClient;
 
     @Override
     @Transactional
@@ -34,12 +35,13 @@ public class OrderServiceImpl implements OrderService {
             String sku = item.getSku();
             Integer quantity = item.getQuantity();
             try {
-                webClientBuilder.build().get()
-                        .uri("http://localhost:8082/api/v1/inventory/reduce/" + sku,
-                                uriBuilder -> uriBuilder.queryParam("quantity", quantity).build())
-                        .retrieve()
-                        .bodyToMono(Boolean.class)
-                        .block();
+                // webClientBuilder.build().get()
+                //         .uri("http://localhost:8082/api/v1/inventory/reduce/" + sku,
+                //                 uriBuilder -> uriBuilder.queryParam("quantity", quantity).build())
+                //         .retrieve()
+                //         .bodyToMono(Boolean.class)
+                //         .block();
+                inventoryClient.reduceStock(sku, quantity);
             } catch (Exception ex) {
                 log.error("Error when reducing the stock of product {}: {}", sku, ex.getMessage());
                 throw new IllegalStateException("No stock available from sku: " + sku);
