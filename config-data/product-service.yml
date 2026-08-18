@@ -15,5 +15,15 @@ spring:
       include-message: always
       include-stacktrace: never
 
+app:
+  maintenance:
+    message: "Operating System - Version 1.0"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "refresh, health"
+
 server:
   port: 8080

@@ -16,5 +16,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+order:
+  enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "refresh, health"
+
 server:
   port: 8081
