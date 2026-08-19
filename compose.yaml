@@ -32,9 +32,44 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: order-db
     volumes:
-      - order_data:/var/lib/posgresql/data
+      - order_data:/var/lib/postgresql/data
+
+  keycloak-db:
+    image: postgres:16-alpine
+    container_name: keycloak-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: keycloak-db
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak -d keycloak-db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak-db
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
 
 volumes:
   mongo_data:
   inventory_data:
   order_data:
+  keycloak_data:
