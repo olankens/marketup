@@ -30,11 +30,24 @@
 
 ## LEARNING
 
+### LAUNCH THE CONTAINERS
+
+```sh
+docker compose down -v
+docker compose up -d
+```
+
 ### DEBUG WITH INTELLIJ IDEA
 
 ```sh
 idea .
 ```
+
+### USEFUL RESOURCE LINKS
+
+<table>
+  <tbody><tr><td width="99999">Keycloak URL</td><td><a href="http://localhost:8080">🌐</a></td></tr></tbody>
+</table>
 
 ### CREATE MONGODB COLLECTION
 
