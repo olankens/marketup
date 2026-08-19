@@ -3,6 +3,7 @@ package com.ecommerce.inventory_service.controller;
 import com.ecommerce.inventory_service.dto.InventoryRequest;
 import com.ecommerce.inventory_service.dto.InventoryResponse;
 import com.ecommerce.inventory_service.service.InventoryService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,8 @@ public class InventoryController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<InventoryResponse> getAllInventory() {
+    public List<InventoryResponse> getAllInventory(HttpServletRequest request) {
+        System.out.println("✅ Request handled from port: " + request.getServerPort());
         return inventoryService.getAllInventory();
     }
 
