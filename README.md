@@ -9,7 +9,7 @@
     <a href="https://ko-fi.com/olankens">FUNDING</a>
   </div></td></tr></tbody>
   <tbody><tr><td align="center" width="99999">&nbsp;<div>
-    E-commerce platform of Spring Boot microservices, exposing inventory REST APIs for stock checks and full CRUD operations, wired through RabbitMQ, secured by Keycloak, and deployed on Kubernetes clusters.
+    Ecommerce platform of Spring Boot microservices, exposing inventory REST APIs for stock checks and full CRUD operations, wired through RabbitMQ, secured by Keycloak, and deployed on Kubernetes clusters.
   </div>&nbsp;</td></tr></tbody>
   <tbody><tr><td align="center" width="99999">
     <a href="https://spring.io"><img src=".assets/spring.svg" align="center" width="56"></a>
