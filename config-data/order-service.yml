@@ -19,7 +19,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http:localhost:8080/realms/marketup-realm
+          issuer-uri: http://localhost:8080/realms/marketup-realm
 
 eureka:
   client:
@@ -30,10 +30,39 @@ order:
   enabled: true
 
 management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: "refresh, health"
+        include: "refresh, health, circuitbreakers"
+
+resilience4j:
+  circuitbreakers:
+    instances:
+      inventory:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+  retry:
+    instances:
+      inventory:
+        maxRetryAttempts: 3
+        waitDuration: 2s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+  # timelimiter:
+  #   instances:
+  #     inventory:
+  #       timeoutDuration: 3s
+  #       cancelRunningFuture: true
 
 server:
   port: 8081

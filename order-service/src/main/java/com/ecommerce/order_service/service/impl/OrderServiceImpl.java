@@ -8,6 +8,8 @@ import com.ecommerce.order_service.model.Order;
 import com.ecommerce.order_service.repository.OrderRepository;
 import com.ecommerce.order_service.service.OrderService;
 import com.ecommerce.order_service.service.client.InventoryClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,10 +34,18 @@ public class OrderServiceImpl implements OrderService {
     @Value("${order.enabled: true}")
     private boolean ordersEnabled;
 
+    public OrderResponse fallbackMethod(OrderRequest orderRequest, String userId, Throwable throwable) {
+        log.error("🛑 Circuit breaker activated. Cause: {}", throwable.getMessage());
+        throw new RuntimeException("Inventory service is temporarily unavailable");
+
+    }
+
     @Override
     @Transactional
+    @CircuitBreaker(name = "inventory", fallbackMethod = "fallbackMethod")
+    @Retry(name = "inventory")
     public OrderResponse placeOrder(OrderRequest orderRequest, String userId) {
-        if (ordersEnabled) {
+        if (!ordersEnabled) {
             log.warn("Order rejected: Service disabled by configuration");
             throw new RuntimeException("Service disabled by configuration");
         }
@@ -46,12 +56,6 @@ public class OrderServiceImpl implements OrderService {
             String sku = item.getSku();
             Integer quantity = item.getQuantity();
             try {
-                // webClientBuilder.build().get()
-                //         .uri("http://localhost:8082/api/v1/inventory/reduce/" + sku,
-                //                 uriBuilder -> uriBuilder.queryParam("quantity", quantity).build())
-                //         .retrieve()
-                //         .bodyToMono(Boolean.class)
-                //         .block();
                 inventoryClient.reduceStock(sku, quantity);
             } catch (Exception ex) {
                 log.error("Error when reducing the stock of product {}: {}", sku, ex.getMessage());
