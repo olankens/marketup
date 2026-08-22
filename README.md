@@ -30,14 +30,7 @@
 
 ## LEARNING
 
-### LAUNCH THE CONTAINERS
-
-```sh
-docker compose down
-docker compose up -d
-```
-
-### DEBUG WITH INTELLIJ IDEA
+### LAUNCH WITH INTELLIJ IDEA
 
 ```sh
 idea .

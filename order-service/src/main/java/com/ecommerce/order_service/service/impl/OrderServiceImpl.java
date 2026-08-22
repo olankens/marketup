@@ -2,6 +2,7 @@ package com.ecommerce.order_service.service.impl;
 
 import com.ecommerce.order_service.dto.OrderRequest;
 import com.ecommerce.order_service.dto.OrderResponse;
+import com.ecommerce.order_service.event.OrderPlacedEvent;
 import com.ecommerce.order_service.exception.ResourceNotFoundException;
 import com.ecommerce.order_service.mapper.OrderMapper;
 import com.ecommerce.order_service.model.Order;
@@ -12,6 +13,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     // private final WebClient.Builder webClientBuilder;
-    private final InventoryClient inventoryClient;
+    // private final InventoryClient inventoryClient;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${order.enabled: true}")
     private boolean ordersEnabled;
@@ -52,19 +55,26 @@ public class OrderServiceImpl implements OrderService {
         log.info("Placing new order");
         Order order = orderMapper.toOrder(orderRequest);
         order.setUserId(userId);
-        for (var item : order.getOrderLineItemsList()) {
-            String sku = item.getSku();
-            Integer quantity = item.getQuantity();
-            try {
-                inventoryClient.reduceStock(sku, quantity);
-            } catch (Exception ex) {
-                log.error("Error when reducing the stock of product {}: {}", sku, ex.getMessage());
-                throw new IllegalStateException("No stock available from sku: " + sku);
-            }
-        }
+        // for (var item : order.getOrderLineItemsList()) {
+        //     String sku = item.getSku();
+        //     Integer quantity = item.getQuantity();
+        //     try {
+        //         inventoryClient.reduceStock(sku, quantity);
+        //     } catch (Exception ex) {
+        //         log.error("Error when reducing the stock of product {}: {}", sku, ex.getMessage());
+        //         throw new IllegalStateException("No stock available from sku: " + sku);
+        //     }
+        // }
         order.setOrderNumber(UUID.randomUUID().toString());
         Order placedOrder = orderRepository.save(order);
         log.info("Order placed with id: {}", placedOrder.getId());
+        List<OrderPlacedEvent.OrderItemEvent> orderItems = order.getOrderLineItemsList().stream()
+                .map(item -> new OrderPlacedEvent.OrderItemEvent(
+                        item.getSku(), item.getPrice(), item.getQuantity()
+                )).toList();
+        OrderPlacedEvent event = new OrderPlacedEvent(placedOrder.getOrderNumber(), orderRequest.getEmail(), orderItems);
+        rabbitTemplate.convertAndSend("order-events", "order.placed", event);
+        log.info("Event sent to RabbitMQ for order: {}", placedOrder.getOrderNumber());
         return orderMapper.toOrderResponse(placedOrder);
     }
 
