@@ -46,7 +46,8 @@ idea .
 ### USEFUL RESOURCE LINKS
 
 <table>
-  <tbody><tr><td width="99999">Keycloak URL</td><td><a href="http://localhost:8080">🌐</a></td></tr></tbody>
+  <tbody><tr><td width="99999">Keycloak Administration UI</td><td><a href="http://localhost:8080">🌐</a></td></tr></tbody>
+  <tbody><tr><td>RabbitMQ Management</td><td><a href="http://localhost:15672">🌐</a></td></tr></tbody>
 </table>
 
 ### CREATE MONGODB COLLECTION
