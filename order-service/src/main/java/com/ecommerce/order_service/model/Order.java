@@ -20,6 +20,8 @@ public class Order {
 
     private String orderNumber;
 
+    private String userId;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private List<OrderLineItems> orderLineItemsList;

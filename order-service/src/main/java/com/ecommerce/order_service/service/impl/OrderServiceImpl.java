@@ -34,13 +34,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse placeOrder(OrderRequest orderRequest) {
+    public OrderResponse placeOrder(OrderRequest orderRequest, String userId) {
         if (ordersEnabled) {
             log.warn("Order rejected: Service disabled by configuration");
             throw new RuntimeException("Service disabled by configuration");
         }
         log.info("Placing new order");
         Order order = orderMapper.toOrder(orderRequest);
+        order.setUserId(userId);
         for (var item : order.getOrderLineItemsList()) {
             String sku = item.getSku();
             Integer quantity = item.getQuantity();
@@ -64,12 +65,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll().stream()
+    public List<OrderResponse> getOrders(String userId, boolean isAdmin) {
+        List<Order> orders;
+        if (isAdmin) {
+            orders = orderRepository.findAll();
+        } else {
+            orders = orderRepository.findByUserId(userId);
+        }
+        return orders.stream()
                 .map(orderMapper::toOrderResponse)
                 .toList();
     }
+
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List<OrderResponse> getAllOrders() {
+    //     return orderRepository.findAll().stream()
+    //             .map(orderMapper::toOrderResponse)
+    //             .toList();
+    // }
 
     @Override
     @Transactional(readOnly = true)
