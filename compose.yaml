@@ -69,7 +69,7 @@ services:
         condition: service_healthy
 
   rabbitmq:
-    image: rabbitmq:4.2-management
+    image: rabbitmq:4.3-management
     container_name: rabbitmq
     ports:
       - "5672:5672"
