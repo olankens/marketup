@@ -1,0 +1,34 @@
+spring:
+  threads:
+    virtual:
+      enabled: true
+  data:
+    mongodb:
+      host: mongodb
+      port: 27017
+      database: product-db
+      username: root
+      password: password
+      authentication-database: admin
+  web:
+    error:
+      include-message: always
+      include-stacktrace: never
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+
+app:
+  maintenance:
+    message: "Operating System - Version 1.0"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "refresh, health"
+
+server:
+  port: 8080
