@@ -23,7 +23,7 @@ services:
       - inventory_data:/var/lib/mysql
 
   order-db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: order-db
     ports:
       - "5432:5432"
@@ -35,7 +35,7 @@ services:
       - order_data:/var/lib/postgresql/data
 
   keycloak-db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: keycloak-db
     ports:
       - "5433:5432"
