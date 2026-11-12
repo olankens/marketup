@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:7.0.48
+    image: mongo:9.0.8
     container_name: mongodb
     restart: always
     ports:
