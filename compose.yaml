@@ -12,7 +12,7 @@ services:
       - mongo_data:/data/db
 
   inventory-db:
-    image: mysql:8
+    image: mysql:26
     container_name: inventory-db
     ports:
       - "3306:3306"
